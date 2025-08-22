@@ -1,6 +1,6 @@
 file(GLOB HEADER_LIST CONFIGURE_DEPENDS "${moveit_rest_client_SOURCE_DIR}/include/*.h")
 
-add_library(client cli.cpp ${HEADER_LIST})
+add_library(client cli.cpp cpr_http_client.cpp ${HEADER_LIST})
 
 target_include_directories(client PUBLIC ../include)
 target_link_libraries(client PUBLIC cpr::cpr)

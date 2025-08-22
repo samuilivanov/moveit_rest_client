@@ -3,6 +3,8 @@
 #include <termios.h>
 #include <unistd.h>
 
+namespace core {
+
 void cli::run(int argc, const char *argv[]) {
   if (argc < 3) {
     std::cerr << "Usage: " << argv[0] << " <username> <file-path>\n";
@@ -39,3 +41,4 @@ std::string cli::prompt_password() {
   std::cout << "\n";
   return password;
 }
+} // namespace moveit_client

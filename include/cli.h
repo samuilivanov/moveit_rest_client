@@ -3,6 +3,8 @@
 #include "moveit_client.h"
 #include <string>
 
+namespace core {
+
 class cli {
 private:
   std::string
@@ -15,5 +17,6 @@ public:
   void run(int argc, const char *argv[]); // TODO (samuil) the pamareters might
                                           // be changed think of a dep injection
 };
+} // namespace moveit_client
 
 #endif
