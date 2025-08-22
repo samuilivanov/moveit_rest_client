@@ -17,9 +17,11 @@ endif()
 
 # set(CPR_USE_SYSTEM_CURL ON CACHE BOOL "" FORCE) # TODO (samuil) del this
 include(FetchContent)
-FetchContent_Declare(cpr GIT_REPOSITORY https://github.com/libcpr/cpr.git
-                         GIT_TAG 1.12.0)
-                         FetchContent_MakeAvailable(cpr)
+FetchContent_Declare(cpr GIT_REPOSITORY https://github.com/libcpr/cpr.git GIT_TAG 1.12.0)
+FetchContent_MakeAvailable(cpr)
+
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz)
+FetchContent_MakeAvailable(json)
 
 add_subdirectory(src)
 
