@@ -8,6 +8,8 @@ endfunction()
 
 add_doctest(test_moveit_client client)
 add_doctest(test_cpr_http_client client)
+add_doctest(test_mock_http_client client)
 
 add_test(NAME test_moveit_client COMMAND test_moveit_client)
 add_test(NAME test_cpr_http_client COMMAND test_cpr_http_client)
+add_test(NAME test_mock_http_client COMMAND test_mock_http_client)

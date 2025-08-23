@@ -15,7 +15,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 
 endif()
 
-# set(CPR_USE_SYSTEM_CURL ON CACHE BOOL "" FORCE) # TODO (samuil) del this
+set(CPR_USE_SYSTEM_CURL ON CACHE BOOL "" FORCE) # TODO (samuil) del this
 include(FetchContent)
 FetchContent_Declare(cpr GIT_REPOSITORY https://github.com/libcpr/cpr.git GIT_TAG 1.12.0)
 FetchContent_MakeAvailable(cpr)

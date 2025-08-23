@@ -16,6 +16,8 @@ void check_response(const cpr::Response &r) {
   if (r.error.code != cpr::ErrorCode::OK) {
     throw std::runtime_error("HTTP request failed: " + r.error.message);
   }
+  // TODO (samuil) this will mess up with the moveit status codes
+  // del this
   if (r.status_code < 200 || r.status_code >= 300) {
     throw std::runtime_error("HTTP request returned status code: " +
                              std::to_string(r.status_code));
