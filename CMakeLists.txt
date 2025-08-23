@@ -23,6 +23,13 @@ FetchContent_MakeAvailable(cpr)
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz)
 FetchContent_MakeAvailable(json)
 
+FetchContent_Declare(
+  cxxopts
+  GIT_REPOSITORY https://github.com/jarro2783/cxxopts.git
+  GIT_TAG v3.2.0   # pick a release tag
+)
+
+FetchContent_MakeAvailable(cxxopts)
 add_subdirectory(src)
 
 add_subdirectory(app)

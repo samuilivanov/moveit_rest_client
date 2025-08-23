@@ -31,7 +31,7 @@ int moveit_client::get_home_folder(const std::string &token) {
   nlohmann::json j = nlohmann::json::parse(response);
   return user_info_response::fromJson(j).homeFolderID;
 }
-
+// TODO (samuil) implement this
 upload_response moveit_client::upload_file(const std::string &filePath) {
   // open file
   // check if all is good
