@@ -39,7 +39,8 @@ public:
   }
 
   std::string post(const std::string &url, const std::string &body,
-                   const std::map<std::string, std::string> &headers) override {
+                   const std::map<std::string, std::string> &headers,
+                   DataProvider data_provider = nullptr) override {
     last_url = url;
     last_body = body;
     last_headers = headers;

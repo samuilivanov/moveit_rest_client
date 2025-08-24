@@ -1,6 +1,6 @@
 #include "cpr_http_client.h"
-
 #include <cpr/cpr.h>
+#include <cstring>
 
 namespace {
 
@@ -38,10 +38,29 @@ cpr_http_client::get(const std::string &url,
 
 std::string
 cpr_http_client::post(const std::string &url, const std::string &body,
-                      const std::map<std::string, std::string> &headers) {
-  auto r = cpr::Post(cpr::Url{url}, cpr::Body{body}, mapToHeader(headers));
-  check_response(r);
-  return r.text;
+                      const std::map<std::string, std::string> &headers,
+                      DataProvider data_provider) {
+  if (!data_provider) {
+    auto r = cpr::Post(cpr::Url{url}, cpr::Body{body}, mapToHeader(headers));
+    check_response(r);
+    return r.text;
+  } else {
+    struct Context {
+      DataProvider provider;
+    } ctx{data_provider};
+
+    auto r = cpr::Post(
+        cpr::Url{url}, mapToHeader(headers),
+        cpr::ReadCallback{
+            [](char *buffer, size_t &length, intptr_t userdata) -> bool {
+              Context *ctx_ = reinterpret_cast<Context *>(userdata);
+              size_t written = ctx_->provider(buffer, length);
+              length = written;
+              return true;
+            },
+            reinterpret_cast<intptr_t>(&ctx)});
+    return r.text;
+  }
 }
 
 std::string
@@ -59,4 +78,4 @@ cpr_http_client::del(const std::string &url,
   check_response(r);
   return r.text;
 }
-} // namespace moveit_client
+} // namespace network

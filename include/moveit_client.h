@@ -17,11 +17,11 @@ struct auth_response {
   std::string refresh_token;
 
   static auth_response fromJson(const nlohmann::json &j) {
-    auth_response resp;
+    auth_response resp{};
     // TODO (samuil) this needs to be in a if statment
     resp.access_token = j.at("access_token").get<std::string>();
     // NOTE (samuil) for now I am skipping the other json fields
-    
+
     return resp;
   }
 };
@@ -40,22 +40,25 @@ struct user_info_response {
   }
 };
 
-// TODO (samuil) finish this it's a mockup for now not the real response from moveit
+// TODO (samuil) finish this it's a mockup for now not the real response from
+// moveit
+// TODO (samuil) at the moment this might not be needed so del
 struct upload_response {
   bool success;
   std::string fileId;
   std::string message;
 
-  static upload_response fromJson(const std::string &json) {
+  static upload_response fromJson([[maybe_unused]] const std::string &json) {
     return upload_response{};
   }
 };
 
 class moveit_client {
 public:
-  moveit_client(std::unique_ptr<network::http_client> httpClient,
-                const std::string
-                    &baseUrl) /* TODO (samuil) remove this parameter and move it to cli */;
+  moveit_client(
+      std::unique_ptr<network::http_client> http_client,
+      const std::string &
+          baseUrl) /* TODO (samuil) remove this parameter and move it to cli */;
   ~moveit_client() = default;
 
   auth_response authenticate(
@@ -65,7 +68,8 @@ public:
 
   int get_home_folder(const std::string &token);
 
-  upload_response upload_file(const std::string &filePath);
+  bool upload_file(const std::string &file_path, const std::string &token,
+                   int id);
 
 private:
   std::unique_ptr<network::http_client> m_http_client;

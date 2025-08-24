@@ -7,10 +7,6 @@ namespace core {
 
 class cli {
 private:
-  std::string
-  prompt_password(); // TODO (samuil) this is fine for now but when asking for
-                     // password make sure to lock memory and clear it after
-                     // possible to make it a void return and out param
   std::unique_ptr<moveit_client> m_moveit_client;
 
 public:
