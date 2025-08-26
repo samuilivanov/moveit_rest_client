@@ -31,7 +31,6 @@ void cli::run(const std::string &username, const std::string &filePath) {
 
   // Prompt password securely
   std::string password = prompt_password();
-  // TODO (samuil) this needs to be refactored it's as is just for a fast test
   try {
     auto token = m_moveit_client->authenticate(username, password);
     auto id = m_moveit_client->get_home_folder(token.access_token);

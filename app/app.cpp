@@ -19,7 +19,7 @@ void run_cli(const std::string &user, const std::string &url,
   cli.run(user, file);
 }
 
-void start_server(int port) {}
+void start_server([[maybe_unused]] int port) {}
 
 } // namespace
 
@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
     switch (mode) {
     case app_mode::SERVER: {
       int port = result["port"].as<int>();
-      std::cout << "Starting server on port " << port << "...\n";
+      std::cout << "Note: Server is not implemented. Starting server on port " << port << "...\n";
       // TODO (samuil) eventually implement this using crow
       start_server(port);
       break;
