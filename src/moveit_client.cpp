@@ -161,34 +161,46 @@ moveit_client::moveit_client(std::unique_ptr<network::http_client> http_client,
     : m_http_client(std::move(http_client)), m_base_url(baseUrl) {}
 
 // TODO (samuil) the hard coded string need to be refactored
-auth_response moveit_client::authenticate(const std::string &username,
-                                          const std::string &password) {
+network::auth_result moveit_client::authenticate(const std::string &username,
+                                                 const std::string &password) {
   std::string body =
       "grant_type=password&username=" + username + "&password=" + password;
 
   std::map<std::string, std::string> headers = {
       {"Content-Type", "application/x-www-form-urlencoded"}};
 
-  std::string response =
+  auto raw_response =
       m_http_client->post(m_base_url + "/api/v1/token", body, headers);
-  nlohmann::json j = nlohmann::json::parse(response);
-
-  return auth_response::fromJson(j);
+  nlohmann::json j = nlohmann::json::parse(raw_response.response);
+  if (raw_response.success) {
+    return network::auth_response::fromJson(j);
+  } else {
+    return network::auth_error::fromJson(j);
+  }
 }
 
 // TODO (samuil) the hard coded string need to be refactored
-int moveit_client::get_home_folder(const std::string &token) {
+network::user_info_result
+moveit_client::get_home_folder(const std::string &token) {
   std::map<std::string, std::string> headers = {
       {"Authorization", "Bearer " + token}};
 
-  std::string response =
+  auto raw_response =
       m_http_client->get(m_base_url + "/api/v1/users/self", headers);
-  nlohmann::json j = nlohmann::json::parse(response);
-  return user_info_response::fromJson(j).homeFolderID;
-}
 
-bool moveit_client::upload_file(const std::string &file_path,
-                                const std::string &token, int id) {
+  nlohmann::json j = nlohmann::json::parse(raw_response.response);
+  if (raw_response.success) {
+    return network::user_info_response::fromJson(j);
+  } else {
+    return network::error_response::fromJson(j);
+  }
+}
+// TODO (samuil) a future improvment might be to check if the file is already
+// there because at the moment it will fail with error that the file exists in
+// this folder
+network::upload_result moveit_client::upload_file(const std::string &file_path,
+                                                  const std::string &token,
+                                                  int id) {
 
   std::ifstream file(file_path, std::ios::binary);
   if (!file.is_open())
@@ -208,10 +220,15 @@ bool moveit_client::upload_file(const std::string &file_path,
       {"Content-Type", "multipart/form-data; boundary=" + boundary},
       {"Transfer-Encoding", "chunked"}};
 
-  auto r = m_http_client->post(m_base_url + "/api/v1/folders/" +
-                                   std::to_string(id) + "/files",
-                               "", headers, provider);
-  std::cout << r << '\n';
-  return true;
+  auto raw_response = m_http_client->post(m_base_url + "/api/v1/folders/" +
+                                              std::to_string(id) + "/files",
+                                          "", headers, provider);
+
+  nlohmann::json j = nlohmann::json::parse(raw_response.response);
+  if (raw_response.success) {
+    return network::upload_response{};
+  } else {
+    return network::error_response::fromJson(j);
+  }
 }
 } // namespace moveit::core

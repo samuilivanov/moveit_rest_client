@@ -24,8 +24,9 @@ public:
     fake_responses[url] = response;
   }
 
-  std::string get(const std::string &url,
-                  const std::map<std::string, std::string> &headers) override {
+  generic_response
+  get(const std::string &url,
+      const std::map<std::string, std::string> &headers) override {
     last_url = url;
     last_headers = headers;
     if (mode == mode::http_error) {
@@ -35,12 +36,13 @@ public:
       throw std::runtime_error("HTTP request failed: simulated api error");
     }
 
-    return fake_responses.count(url) ? fake_responses[url] : "{}";
+    return generic_response{
+        true, fake_responses.count(url) ? fake_responses[url] : "{}"};
   }
 
-  std::string post(const std::string &url, const std::string &body,
-                   const std::map<std::string, std::string> &headers,
-                   DataProvider data_provider = nullptr) override {
+  generic_response post(const std::string &url, const std::string &body,
+                        const std::map<std::string, std::string> &headers,
+                        DataProvider data_provider = nullptr) override {
     last_url = url;
     last_body = body;
     last_headers = headers;
@@ -50,26 +52,31 @@ public:
     if (mode == mode::api_error) {
       throw std::runtime_error("HTTP request failed: simulated api error");
     }
-    return fake_responses.count(url) ? fake_responses[url] : "{}";
+    return generic_response{
+        true, fake_responses.count(url) ? fake_responses[url] : "{}"};
   }
 
-  std::string put(const std::string &url, const std::string &body,
-                  const std::map<std::string, std::string> &headers) override {
+  generic_response
+  put(const std::string &url, const std::string &body,
+      const std::map<std::string, std::string> &headers) override {
     last_url = url;
     last_body = body;
     last_headers = headers;
     // TODO (samuil) add the other modes that simulate issues
-    return fake_responses.count(url) ? fake_responses[url] : "{}";
+    return generic_response{
+        true, fake_responses.count(url) ? fake_responses[url] : "{}"};
   }
 
-  std::string del(const std::string &url,
-                  const std::map<std::string, std::string> &headers) override {
+  generic_response
+  del(const std::string &url,
+      const std::map<std::string, std::string> &headers) override {
     last_url = url;
     last_headers = headers;
     // TODO (samuil) add the other modes that simulate issues
-    return fake_responses.count(url) ? fake_responses[url] : "{}";
+    return generic_response{
+        true, fake_responses.count(url) ? fake_responses[url] : "{}"};
   }
 };
-} // namespace network
+} // namespace moveit::network
 
 #endif

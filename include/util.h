@@ -1,6 +1,7 @@
 #ifndef MOVEIT_UTIL_H
 #define MOVEIT_UTIL_H
 
+#include "moveit_client.h"
 #include <memory>
 #include <openssl/evp.h>
 #include <stdexcept>
@@ -14,6 +15,7 @@ make_evp_md_ctx() {
     throw std::bad_alloc();
   return {ctx, &EVP_MD_CTX_free};
 }
+
 } // namespace moveit::util
 
 #endif

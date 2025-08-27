@@ -11,22 +11,22 @@ class cpr_http_client : public http_client {
 public:
   ~cpr_http_client() override = default;
 
-  std::string
+  generic_response
   get(const std::string &url,
       const std::map<std::string, std::string> &headers = {}) override;
 
-  std::string post(const std::string &url, const std::string &body = "",
+  generic_response post(const std::string &url, const std::string &body = "",
                    const std::map<std::string, std::string> &headers = {},
                    DataProvider data_provider = nullptr) override;
 
-  std::string
+  generic_response
   put(const std::string &url, const std::string &body = "",
       const std::map<std::string, std::string> &headers = {}) override;
 
-  std::string
+  generic_response
   del(const std::string &url,
       const std::map<std::string, std::string> &headers = {}) override;
 };
-} // namespace network
+} // namespace moveit::network
 
 #endif
