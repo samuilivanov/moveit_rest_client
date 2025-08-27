@@ -3,6 +3,7 @@
 
 #include "http_client.h"
 #include "responses.h"
+#include <filesystem>
 #include <map>
 #include <memory>
 #include <stdexcept>
@@ -16,14 +17,14 @@ public:
                 const std::string &baseUrl);
   ~moveit_client() = default;
 
-  network::auth_result authenticate(
+  [[nodiscard]] network::auth_result authenticate(
       const std::string &username,
       const std::string &password); // TODO (samuil) this password should not be
                                     // in this form it's a security issue
 
-  network::user_info_result get_home_folder(const std::string &token);
+  [[nodiscard]] network::user_info_result get_home_folder(const std::string &token);
 
-  network::upload_result upload_file(const std::string &file_path,
+  [[nodiscard]] network::upload_result upload_file(const std::filesystem::path &file_path,
                                      const std::string &token, int id);
 
 private:

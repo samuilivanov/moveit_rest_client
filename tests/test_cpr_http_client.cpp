@@ -13,7 +13,8 @@ TEST_CASE("cpr_http_client GET request" * doctest::skip()) {
   moveit::network::cpr_http_client client;
   std::map<std::string, std::string> headers{{"User-Agent", "doctest-client"}};
 
-  auto response = client.get("https://httpbin.org/get", headers);
+  auto response =
+      client.get(moveit::network::url{"https://httpbin.org/get"}, headers);
 
   CHECK(response.response.find("\"User-Agent\": \"doctest-client\"") !=
         std::string::npos);
@@ -23,9 +24,10 @@ TEST_CASE("cpr_http_client POST request" * doctest::skip()) {
   moveit::network::cpr_http_client client;
   std::map<std::string, std::string> headers{
       {"Content-Type", "application/json"}};
-  std::string body = R"({"message":"hello"})";
+  std::string b = R"({"message":"hello"})";
 
-  auto response = client.post("https://httpbin.org/post", body, headers);
+  auto response = client.post(moveit::network::url{"https://httpbin.org/post"},
+                              moveit::network::body{b}, headers);
 
   CHECK(response.response.find("\"message\": \"hello\"") != std::string::npos);
 }
@@ -34,9 +36,10 @@ TEST_CASE("cpr_http_client PUT request" * doctest::skip()) {
   moveit::network::cpr_http_client client;
   std::map<std::string, std::string> headers{
       {"Content-Type", "application/json"}};
-  std::string body = R"({"update":"value"})";
+  std::string b = R"({"update":"value"})";
 
-  auto response = client.put("https://httpbin.org/put", body, headers);
+  auto response = client.put(moveit::network::url{"https://httpbin.org/put"},
+                             moveit::network::body{b}, headers);
 
   CHECK(response.response.find("\"update\": \"value\"") != std::string::npos);
 }
@@ -45,7 +48,8 @@ TEST_CASE("cpr_http_client DELETE request" * doctest::skip()) {
   moveit::network::cpr_http_client client;
   std::map<std::string, std::string> headers{{"X-Test", "delete"}};
 
-  auto response = client.del("https://httpbin.org/delete", headers);
+  auto response =
+      client.del(moveit::network::url{"https://httpbin.org/delete"}, headers);
 
   CHECK(response.response.find("\"X-Test\": \"delete\"") != std::string::npos);
 }

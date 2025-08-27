@@ -5,7 +5,8 @@
 
 namespace {
 
-cpr::Header mapToHeader(const std::map<std::string, std::string> &headers) {
+[[nodiscard]] cpr::Header
+mapToHeader(const std::map<std::string, std::string> &headers) {
   cpr::Header h;
   for (const auto &[key, value] : headers) {
     h[key] = value;
@@ -13,7 +14,8 @@ cpr::Header mapToHeader(const std::map<std::string, std::string> &headers) {
   return h;
 }
 
-moveit::network::generic_response check_response(const cpr::Response &r) {
+[[nodiscard]] moveit::network::generic_response
+check_response(const cpr::Response &r) {
   if (r.error.code != cpr::ErrorCode::OK) {
     throw std::runtime_error("HTTP request failed: " + r.error.message);
   }
@@ -25,19 +27,19 @@ moveit::network::generic_response check_response(const cpr::Response &r) {
 
 namespace moveit::network {
 
-generic_response
-cpr_http_client::get(const std::string &url,
-                     const std::map<std::string, std::string> &headers) {
-  auto r = cpr::Get(cpr::Url{url}, mapToHeader(headers));
+[[nodiscard]] generic_response
+cpr_http_client::get(const url &u,
+                     const std::map<std::string, std::string> &headers) const {
+  auto r = cpr::Get(cpr::Url{u}, mapToHeader(headers));
   return check_response(r);
 }
 
-generic_response
-cpr_http_client::post(const std::string &url, const std::string &body,
+[[nodiscard]] generic_response
+cpr_http_client::post(const url &u, const body &b,
                       const std::map<std::string, std::string> &headers,
-                      DataProvider data_provider) {
+                      DataProvider data_provider) const {
   if (!data_provider) {
-    auto r = cpr::Post(cpr::Url{url}, cpr::Body{body}, mapToHeader(headers));
+    auto r = cpr::Post(cpr::Url{u}, cpr::Body{b}, mapToHeader(headers));
     return check_response(r);
   } else {
     struct Context {
@@ -45,7 +47,7 @@ cpr_http_client::post(const std::string &url, const std::string &body,
     } ctx{data_provider};
 
     auto r = cpr::Post(
-        cpr::Url{url}, mapToHeader(headers),
+        cpr::Url{u}, mapToHeader(headers),
         cpr::ReadCallback{
             [](char *buffer, size_t &length, intptr_t userdata) -> bool {
               Context *ctx_ = reinterpret_cast<Context *>(userdata);
@@ -58,17 +60,17 @@ cpr_http_client::post(const std::string &url, const std::string &body,
   }
 }
 
-generic_response
-cpr_http_client::put(const std::string &url, const std::string &body,
-                     const std::map<std::string, std::string> &headers) {
-  auto r = cpr::Put(cpr::Url{url}, cpr::Body{body}, mapToHeader(headers));
+[[nodiscard]] generic_response
+cpr_http_client::put(const url &u, const body &b,
+                     const std::map<std::string, std::string> &headers) const {
+  auto r = cpr::Put(cpr::Url{u}, cpr::Body{b}, mapToHeader(headers));
   return check_response(r);
 }
 
-generic_response
-cpr_http_client::del(const std::string &url,
-                     const std::map<std::string, std::string> &headers) {
-  auto r = cpr::Delete(cpr::Url{url}, mapToHeader(headers));
+[[nodiscard]] generic_response
+cpr_http_client::del(const url &u,
+                     const std::map<std::string, std::string> &headers) const {
+  auto r = cpr::Delete(cpr::Url{u}, mapToHeader(headers));
   return check_response(r);
 }
 } // namespace moveit::network

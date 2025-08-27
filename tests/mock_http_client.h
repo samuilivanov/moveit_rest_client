@@ -13,21 +13,21 @@ public:
   ~mock_http_client() = default;
   enum class mode { success, http_error, api_error };
   mode mode = mode::success;
-  std::string last_url;
-  std::string last_body;
+  mutable std::string last_url;
+  mutable std::string last_body;
 
-  std::map<std::string, std::string> last_headers;
+  mutable std::map<std::string, std::string> last_headers;
 
-  std::unordered_map<std::string, std::string> fake_responses;
+  mutable std::unordered_map<std::string, std::string> fake_responses;
 
   void set_response(const std::string &url, const std::string &response) {
     fake_responses[url] = response;
   }
 
   generic_response
-  get(const std::string &url,
-      const std::map<std::string, std::string> &headers) override {
-    last_url = url;
+  get(const url &u,
+      const std::map<std::string, std::string> &headers) const override {
+    last_url = u;
     last_headers = headers;
     if (mode == mode::http_error) {
       throw std::runtime_error("HTTP request failed: simulated network error");
@@ -36,15 +36,15 @@ public:
       throw std::runtime_error("HTTP request failed: simulated api error");
     }
 
-    return generic_response{
-        true, fake_responses.count(url) ? fake_responses[url] : "{}"};
+    return generic_response{true,
+                            fake_responses.count(u) ? fake_responses[u] : "{}"};
   }
 
-  generic_response post(const std::string &url, const std::string &body,
+  generic_response post(const url &u, const body &b,
                         const std::map<std::string, std::string> &headers,
-                        DataProvider data_provider = nullptr) override {
-    last_url = url;
-    last_body = body;
+                        DataProvider data_provider = nullptr) const override {
+    last_url = u;
+    last_body = b;
     last_headers = headers;
     if (mode == mode::http_error) {
       throw std::runtime_error("HTTP request failed: simulated network error");
@@ -52,29 +52,29 @@ public:
     if (mode == mode::api_error) {
       throw std::runtime_error("HTTP request failed: simulated api error");
     }
-    return generic_response{
-        true, fake_responses.count(url) ? fake_responses[url] : "{}"};
+    return generic_response{true,
+                            fake_responses.count(u) ? fake_responses[u] : "{}"};
   }
 
   generic_response
-  put(const std::string &url, const std::string &body,
-      const std::map<std::string, std::string> &headers) override {
-    last_url = url;
-    last_body = body;
+  put(const url &u, const body &b,
+      const std::map<std::string, std::string> &headers) const override {
+    last_url = u;
+    last_body = b;
     last_headers = headers;
     // TODO (samuil) add the other modes that simulate issues
-    return generic_response{
-        true, fake_responses.count(url) ? fake_responses[url] : "{}"};
+    return generic_response{true,
+                            fake_responses.count(u) ? fake_responses[u] : "{}"};
   }
 
   generic_response
-  del(const std::string &url,
-      const std::map<std::string, std::string> &headers) override {
-    last_url = url;
+  del(const url &u,
+      const std::map<std::string, std::string> &headers) const override {
+    last_url = u;
     last_headers = headers;
     // TODO (samuil) add the other modes that simulate issues
-    return generic_response{
-        true, fake_responses.count(url) ? fake_responses[url] : "{}"};
+    return generic_response{true,
+                            fake_responses.count(u) ? fake_responses[u] : "{}"};
   }
 };
 } // namespace moveit::network

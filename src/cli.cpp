@@ -9,7 +9,7 @@
 
 namespace {
 // Masked password input (Linux-only)
-std::string prompt_password() {
+[[nodiscard]] std::string prompt_password() {
   std::cout << "Enter password: ";
   termios oldt{};
   tcgetattr(STDIN_FILENO, &oldt);
@@ -29,12 +29,13 @@ std::string prompt_password() {
 
 namespace moveit::core {
 
-void cli::run(const std::string &username, const std::string &filePath) {
+void cli::run(const std::string &username,
+              const std::filesystem::path &filePath) {
 
   // Prompt password securely
   std::string password = prompt_password();
   try {
-    std::string access_token;
+    std::string access_token{};
     auto token = m_moveit_client->authenticate(username, password);
 
     if (std::holds_alternative<network::auth_response>(token)) {
@@ -51,11 +52,9 @@ void cli::run(const std::string &username, const std::string &filePath) {
       const auto &resp = std::get<network::user_info_response>(user_info);
       user_folder_id = resp.homeFolderID;
     } else {
-      const auto &err = std::get<network::error_response>(user_info);
-      std::cerr << "User folder info request failed (status " << err.errorCode
-                << " with error: " << err.detail << "\n";
-      throw std::runtime_error("User folder info request failed (status " +
-                               std::get<network::error_response>(user_info).detail);
+      throw std::runtime_error(
+          "User folder info request failed (status " +
+          std::get<network::error_response>(user_info).detail);
     }
 
     auto result_from_upload =

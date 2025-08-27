@@ -11,21 +11,22 @@ class cpr_http_client : public http_client {
 public:
   ~cpr_http_client() override = default;
 
-  generic_response
-  get(const std::string &url,
-      const std::map<std::string, std::string> &headers = {}) override;
+  [[nodiscard]] generic_response
+  get(const url &u,
+      const std::map<std::string, std::string> &headers = {}) const override;
 
-  generic_response post(const std::string &url, const std::string &body = "",
-                   const std::map<std::string, std::string> &headers = {},
-                   DataProvider data_provider = nullptr) override;
+  [[nodiscard]] generic_response
+  post(const url &u, const body &b = body{},
+       const std::map<std::string, std::string> &headers = {},
+       DataProvider data_provider = nullptr) const override;
 
-  generic_response
-  put(const std::string &url, const std::string &body = "",
-      const std::map<std::string, std::string> &headers = {}) override;
+  [[nodiscard]] generic_response
+  put(const url &u, const body &b = body{},
+      const std::map<std::string, std::string> &headers = {}) const override;
 
-  generic_response
-  del(const std::string &url,
-      const std::map<std::string, std::string> &headers = {}) override;
+  [[nodiscard]] generic_response
+  del(const url &u,
+      const std::map<std::string, std::string> &headers = {}) const override;
 };
 } // namespace moveit::network
 

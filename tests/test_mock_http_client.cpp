@@ -11,25 +11,27 @@ TEST_CASE("mock_http_client basic behavior") {
   client.set_response("http://test/post", R"({"result":"created"})");
 
   SUBCASE("GET request returns fake response") {
-    auto res = client.get("http://test/get", {});
+    auto res = client.get(moveit::network::url{"http://test/get"}, {});
     CHECK(res.response == R"({"status":"ok"})");
     CHECK(client.last_url == "http://test/get");
   }
 
   SUBCASE("POST request returns fake response and stores body") {
-    auto res = client.post("http://test/post", "data=123", {});
+    auto res = client.post(moveit::network::url{"http://test/post"},
+                           moveit::network::body{"data=123"}, {});
     CHECK(res.response == R"({"result":"created"})");
     CHECK(client.last_body == "data=123");
   }
 
   SUBCASE("PUT returns default if not configured") {
-    auto res = client.put("http://test/put", "update", {});
+    auto res = client.put(moveit::network::url{"http://test/put"},
+                          moveit::network::body{"update"}, {});
     CHECK(res.response == "{}");
   }
 
   SUBCASE("DELETE works with preconfigured response") {
     client.set_response("http://test/delete", R"({"deleted":true})");
-    auto res = client.del("http://test/delete", {});
+    auto res = client.del(moveit::network::url{"http://test/delete"}, {});
     CHECK(res.response == R"({"deleted":true})");
   }
 }

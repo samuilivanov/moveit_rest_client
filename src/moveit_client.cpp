@@ -1,4 +1,5 @@
 #include "moveit_client.h"
+#include "api_constants.h"
 #include "util.h"
 #include <algorithm>
 #include <chrono>
@@ -8,8 +9,8 @@
 
 namespace {
 
-size_t copy_chunk(const std::string &src, size_t &offset, char *buffer,
-                  size_t max_length) {
+[[nodiscard]] size_t copy_chunk(const std::string &src, size_t &offset,
+                                char *buffer, size_t max_length) {
   if (offset >= src.size()) {
     return 0;
   }
@@ -67,8 +68,8 @@ struct upload_state {
   }
 };
 
-size_t stream_file_chunk(upload_state &state, char *buffer, size_t max_length,
-                         size_t total_size) {
+[[nodiscard]] size_t stream_file_chunk(upload_state &state, char *buffer,
+                                       size_t max_length, size_t total_size) {
   if (state.file_done) {
     return 0;
   }
@@ -153,6 +154,25 @@ auto make_upload_callback = [](std::ifstream &file, size_t total_size,
   };
 };
 
+[[nodiscard]] inline std::string full_url(const std::string &base,
+                                          std::string_view endpoint) {
+  return base + std::string(endpoint);
+}
+
+[[nodiscard]] inline std::string full_url(const std::string &base,
+                                          std::string_view endpoint,
+                                          const std::string &file) {
+  return base + std::string(endpoint) + file + "/files";
+}
+
+[[nodiscard]] inline std::string bearer(const std::string &token) {
+  return "Bearer " + token;
+}
+
+[[nodiscard]] inline std::string
+multipart_form_data(const std::string &boundary) {
+  return "multipart/form-data; boundary=" + boundary;
+}
 } // namespace
 
 namespace moveit::core {
@@ -167,10 +187,11 @@ network::auth_result moveit_client::authenticate(const std::string &username,
       "grant_type=password&username=" + username + "&password=" + password;
 
   std::map<std::string, std::string> headers = {
-      {"Content-Type", "application/x-www-form-urlencoded"}};
+      {api::CONTENT_TYPE_HEADER, api::urlencoded_content_type}};
 
   auto raw_response =
-      m_http_client->post(m_base_url + "/api/v1/token", body, headers);
+      m_http_client->post(network::url{full_url(m_base_url, api::authenticate)},
+                          network::body{body}, headers);
   nlohmann::json j = nlohmann::json::parse(raw_response.response);
   if (raw_response.success) {
     return network::auth_response::fromJson(j);
@@ -179,14 +200,13 @@ network::auth_result moveit_client::authenticate(const std::string &username,
   }
 }
 
-// TODO (samuil) the hard coded string need to be refactored
 network::user_info_result
 moveit_client::get_home_folder(const std::string &token) {
   std::map<std::string, std::string> headers = {
-      {"Authorization", "Bearer " + token}};
+      {api::AUTH_HEADER, bearer(token)}};
+  auto url = network::url{full_url(m_base_url, api::get_current_user_details)};
 
-  auto raw_response =
-      m_http_client->get(m_base_url + "/api/v1/users/self", headers);
+  auto raw_response = m_http_client->get(url, headers);
 
   nlohmann::json j = nlohmann::json::parse(raw_response.response);
   if (raw_response.success) {
@@ -198,9 +218,9 @@ moveit_client::get_home_folder(const std::string &token) {
 // TODO (samuil) a future improvment might be to check if the file is already
 // there because at the moment it will fail with error that the file exists in
 // this folder
-network::upload_result moveit_client::upload_file(const std::string &file_path,
-                                                  const std::string &token,
-                                                  int id) {
+network::upload_result
+moveit_client::upload_file(const std::filesystem::path &file_path,
+                           const std::string &token, int id) {
 
   std::ifstream file(file_path, std::ios::binary);
   if (!file.is_open())
@@ -210,19 +230,20 @@ network::upload_result moveit_client::upload_file(const std::string &file_path,
   file.seekg(0, std::ios::beg);
 
   std::string boundary = "----Boundary12345";
-  std::string filename = std::filesystem::path(file_path).filename().string();
+  std::string filename = file_path.filename();
 
   network::DataProvider provider =
       make_upload_callback(file, total_size, boundary, filename);
 
   std::map<std::string, std::string> headers{
-      {"Authorization", "Bearer " + token},
-      {"Content-Type", "multipart/form-data; boundary=" + boundary},
-      {"Transfer-Encoding", "chunked"}};
+      {api::AUTH_HEADER, bearer(token)},
+      {api::CONTENT_TYPE_HEADER, multipart_form_data(boundary)},
+      {api::TRANSFER_ENCODING_HEADER, api::chunked}};
 
-  auto raw_response = m_http_client->post(m_base_url + "/api/v1/folders/" +
-                                              std::to_string(id) + "/files",
-                                          "", headers, provider);
+  auto raw_response = m_http_client->post(
+      network::url{full_url(m_base_url, api::upload, std::to_string(id))},
+      {} /* TODO (samuil) this empty body should be done is a different way */,
+      headers, provider);
 
   nlohmann::json j = nlohmann::json::parse(raw_response.response);
   if (raw_response.success) {
