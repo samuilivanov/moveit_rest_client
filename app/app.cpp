@@ -12,10 +12,10 @@ enum class app_mode { SERVER, CLI, UNKNOWN };
 
 void run_cli(const std::string &user, const std::string &url,
              const std::string &file) {
-  std::unique_ptr<core::moveit_client> mv_client =
-      std::make_unique<core::moveit_client>(
-          std::make_unique<network::cpr_http_client>(), url);
-  core::cli cli{std::move(mv_client)};
+  std::unique_ptr<moveit::core::moveit_client> mv_client =
+      std::make_unique<moveit::core::moveit_client>(
+          std::make_unique<moveit::network::cpr_http_client>(), url);
+  moveit::core::cli cli{std::move(mv_client)};
   cli.run(user, file);
 }
 
@@ -57,7 +57,8 @@ int main(int argc, char *argv[]) {
     switch (mode) {
     case app_mode::SERVER: {
       int port = result["port"].as<int>();
-      std::cout << "Note: Server is not implemented. Starting server on port " << port << "...\n";
+      std::cout << "Note: Server is not implemented. Starting server on port "
+                << port << "...\n";
       // TODO (samuil) eventually implement this using crow
       start_server(port);
       break;

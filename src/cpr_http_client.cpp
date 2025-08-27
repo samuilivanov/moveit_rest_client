@@ -26,7 +26,7 @@ void check_response(const cpr::Response &r) {
 
 } // namespace
 
-namespace network {
+namespace moveit::network {
 
 std::string
 cpr_http_client::get(const std::string &url,
@@ -78,4 +78,4 @@ cpr_http_client::del(const std::string &url,
   check_response(r);
   return r.text;
 }
-} // namespace network
+} // namespace moveit::network

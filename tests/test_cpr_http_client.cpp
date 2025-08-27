@@ -10,7 +10,7 @@
 // NOTE (samuil) this is also a bit flaky
 
 TEST_CASE("cpr_http_client GET request" * doctest::skip()) {
-  network::cpr_http_client client;
+  moveit::network::cpr_http_client client;
   std::map<std::string, std::string> headers{{"User-Agent", "doctest-client"}};
 
   std::string response = client.get("https://httpbin.org/get", headers);
@@ -20,7 +20,7 @@ TEST_CASE("cpr_http_client GET request" * doctest::skip()) {
 }
 
 TEST_CASE("cpr_http_client POST request" * doctest::skip()) {
-  network::cpr_http_client client;
+  moveit::network::cpr_http_client client;
   std::map<std::string, std::string> headers{
       {"Content-Type", "application/json"}};
   std::string body = R"({"message":"hello"})";
@@ -31,7 +31,7 @@ TEST_CASE("cpr_http_client POST request" * doctest::skip()) {
 }
 
 TEST_CASE("cpr_http_client PUT request" * doctest::skip()) {
-  network::cpr_http_client client;
+  moveit::network::cpr_http_client client;
   std::map<std::string, std::string> headers{
       {"Content-Type", "application/json"}};
   std::string body = R"({"update":"value"})";
@@ -42,7 +42,7 @@ TEST_CASE("cpr_http_client PUT request" * doctest::skip()) {
 }
 
 TEST_CASE("cpr_http_client DELETE request" * doctest::skip()) {
-  network::cpr_http_client client;
+  moveit::network::cpr_http_client client;
   std::map<std::string, std::string> headers{{"X-Test", "delete"}};
 
   std::string response = client.del("https://httpbin.org/delete", headers);

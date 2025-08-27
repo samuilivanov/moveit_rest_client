@@ -5,7 +5,7 @@
 #include <map>
 #include <string>
 
-namespace network {
+namespace moveit::network {
 using DataProvider = std::function<size_t(char *buffer, size_t maxLength)>;
 
 class http_client {
@@ -29,6 +29,6 @@ public:
   del(const std::string &url,
       const std::map<std::string, std::string> &headers = {}) = 0;
 };
-} // namespace network
+} // namespace moveit::network
 
 #endif

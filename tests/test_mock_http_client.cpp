@@ -6,7 +6,7 @@
 // can be used in the other tests
 
 TEST_CASE("mock_http_client basic behavior") {
-  network::mock_http_client client;
+  moveit::network::mock_http_client client;
   client.set_response("http://test/get", R"({"status":"ok"})");
   client.set_response("http://test/post", R"({"result":"created"})");
 

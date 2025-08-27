@@ -3,7 +3,7 @@
 #include "moveit_client.h"
 #include <string>
 
-namespace core {
+namespace moveit::core {
 
 class cli {
 private:
@@ -17,6 +17,6 @@ public:
            const std::string &filePath); // TODO (samuil) the pamareters might
                                          // be changed think of a dep injection
 };
-} // namespace core
+} // namespace moveit::core
 
 #endif

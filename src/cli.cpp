@@ -25,7 +25,7 @@ std::string prompt_password() {
 }
 } // namespace
 
-namespace core {
+namespace moveit::core {
 
 void cli::run(const std::string &username, const std::string &filePath) {
 
@@ -44,4 +44,4 @@ void cli::run(const std::string &username, const std::string &filePath) {
   }
 }
 
-} // namespace core
+} // namespace moveit::core

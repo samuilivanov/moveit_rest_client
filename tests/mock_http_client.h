@@ -6,7 +6,7 @@
 
 #include "http_client.h"
 
-namespace network {
+namespace moveit::network {
 
 class mock_http_client : public http_client {
 public:

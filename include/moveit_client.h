@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace core {
+namespace moveit::core {
 
 struct auth_response {
   std::string access_token;
@@ -78,6 +78,6 @@ private:
 
   //   std::map<std::string, std::string> defaultHeaders() const;
 };
-} // namespace core
+} // namespace moveit::core
 
 #endif

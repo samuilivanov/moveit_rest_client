@@ -5,7 +5,7 @@
 #include <cpr/api.h>
 #include <stdexcept>
 
-namespace network {
+namespace moveit::network {
 
 class cpr_http_client : public http_client {
 public:

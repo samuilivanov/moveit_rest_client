@@ -43,7 +43,7 @@ struct upload_state {
                std::string hashtype_hdr, std::string end)
       : file(f), preamble(std::move(pre)), hash_header(std::move(hash_hdr)),
         hashtype_header(std::move(hashtype_hdr)), ending(std::move(end)),
-        mdctx(make_evp_md_ctx()) {
+        mdctx(moveit::util::make_evp_md_ctx()) {
     EVP_DigestInit_ex(mdctx.get(), EVP_sha256(), nullptr);
   }
 
@@ -155,7 +155,7 @@ auto make_upload_callback = [](std::ifstream &file, size_t total_size,
 
 } // namespace
 
-namespace core {
+namespace moveit::core {
 moveit_client::moveit_client(std::unique_ptr<network::http_client> http_client,
                              const std::string &baseUrl)
     : m_http_client(std::move(http_client)), m_base_url(baseUrl) {}
@@ -214,4 +214,4 @@ bool moveit_client::upload_file(const std::string &file_path,
   std::cout << r << '\n';
   return true;
 }
-} // namespace core
+} // namespace moveit::core
