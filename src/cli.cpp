@@ -30,7 +30,7 @@ namespace {
 namespace moveit::core {
 
 void cli::run(const std::string &username,
-              const std::filesystem::path &filePath) {
+              const std::filesystem::path &filePath) const {
 
   // Prompt password securely
   std::string password = prompt_password();

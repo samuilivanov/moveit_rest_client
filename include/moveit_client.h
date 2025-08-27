@@ -22,17 +22,17 @@ public:
       const std::string &password); // TODO (samuil) this password should not be
                                     // in this form it's a security issue
 
-  [[nodiscard]] network::user_info_result get_home_folder(const std::string &token);
+  [[nodiscard]] network::user_info_result
+  get_home_folder(const std::string &token);
 
-  [[nodiscard]] network::upload_result upload_file(const std::filesystem::path &file_path,
-                                     const std::string &token, int id);
+  [[nodiscard]] network::upload_result
+  upload_file(const std::filesystem::path &file_path, const std::string &token,
+              int id);
 
 private:
   std::unique_ptr<network::http_client> m_http_client;
   std::string m_base_url;
   std::string m_auth_token;
-
-  //   std::map<std::string, std::string> defaultHeaders() const;
 };
 } // namespace moveit::core
 

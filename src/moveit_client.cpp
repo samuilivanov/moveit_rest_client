@@ -139,7 +139,7 @@ auto make_upload_callback = [](std::ifstream &file, size_t total_size,
       return n;
 
     // 6. hashtype value
-    static const std::string hashtype_value = "sha-256";
+    static constexpr auto hashtype_value = "sha-256";
     if (auto n = copy_chunk(hashtype_value, state->hashtype_value_offset,
                             buffer, max_length))
       return n;
@@ -229,7 +229,7 @@ moveit_client::upload_file(const std::filesystem::path &file_path,
   size_t total_size = file.tellg();
   file.seekg(0, std::ios::beg);
 
-  std::string boundary = "----Boundary12345";
+  static constexpr auto boundary = "----Boundary12345";
   std::string filename = file_path.filename();
 
   network::DataProvider provider =

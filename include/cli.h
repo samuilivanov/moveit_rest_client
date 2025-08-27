@@ -13,7 +13,8 @@ public:
   explicit cli(std::unique_ptr<moveit_client> moveit_client)
       : m_moveit_client(std::move(moveit_client)) {}
 
-  void run(const std::string &username, const std::filesystem::path &filePath);
+  void run(const std::string &username,
+           const std::filesystem::path &filePath) const;
 };
 } // namespace moveit::core
 

@@ -12,7 +12,7 @@ struct auth_response {
   int expires_in;
   std::string refresh_token;
 
-  static auth_response fromJson(const nlohmann::json &j) {
+  [[nodiscard]] static auth_response fromJson(const nlohmann::json &j) {
     auth_response resp{};
     if (j.contains("access_token")) {
       resp.access_token = j.at("access_token").get<std::string>();
@@ -27,7 +27,7 @@ struct auth_response {
 struct auth_error {
   std::string error;
   std::string error_description;
-  static auth_error fromJson(const nlohmann::json &j) {
+  [[nodiscard]] static auth_error fromJson(const nlohmann::json &j) {
     auth_error resp{};
     // TODO (samuil) this needs to be in a if statment
     resp.error = j.at("error").get<std::string>();
@@ -43,7 +43,7 @@ using auth_result = std::variant<auth_response, auth_error>;
 struct user_info_response {
   int homeFolderID = 0;
 
-  static user_info_response fromJson(const nlohmann::json &j) {
+  [[nodiscard]] static user_info_response fromJson(const nlohmann::json &j) {
     user_info_response info;
     if (j.contains("homeFolderID")) {
       info.homeFolderID = j.at("homeFolderID").get<int>();
@@ -58,7 +58,7 @@ struct error_response {
   std::string detail;
   int errorCode = 0;
 
-  static error_response fromJson(const nlohmann::json &j) {
+  [[nodiscard]] static error_response fromJson(const nlohmann::json &j) {
     error_response info;
     if (j.contains("detail")) {
       info.detail = j.at("detail").get<std::string>();
